@@ -217,12 +217,13 @@ describe("Marketplace", function ()  {
             let signature = await owner.signMessage(ethers.utils.arrayify(msg));
             let sig = await ethers.utils.splitSignature(signature);
 
-            await expect(bridgeEth.redeem(msg, ethers.utils.parseEther("1"), sig.v, sig.r, sig.s)).to.be.revertedWith("Validation failed");
+            await expect(bridgeEth.redeem(msg, ethers.utils.parseEther("1"), sig.v, sig.r, sig.s)).to.be.revertedWith("Transaction exists already");
+            await expect(bridgeBnb.redeem(msg, ethers.utils.parseEther("1"), sig.v, sig.r, sig.s)).to.be.revertedWith("Validation failed");
 
             signature = await validator.signMessage(ethers.utils.arrayify(msg));
             sig = await ethers.utils.splitSignature(signature);
 
-            await bridgeEth.redeem(msg, ethers.utils.parseEther("1"), sig.v, sig.r, sig.s);
+            await bridgeBnb.redeem(msg, ethers.utils.parseEther("1"), sig.v, sig.r, sig.s);
         });
     });
 });

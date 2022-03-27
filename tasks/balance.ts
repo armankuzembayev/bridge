@@ -11,5 +11,5 @@ task("balance", "Swap Between Networks")
     
     const balance = await contract.balanceOf(taskArgs.user);
 
-    console.log( ethers.utils.formatEther(balance));
+    console.log(ethers.utils.formatEther(balance));
 });

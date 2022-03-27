@@ -39,7 +39,7 @@ contract Bridge is AccessControl {
         validatorAddress = _validatorAddress;
     }
 
-    function includeToken(address _contractAddress, string memory _symbol) public {
+    function includeToken(address _contractAddress, string memory _symbol) public onlyRole(ADMIN) {
         require(
             tokens[_contractAddress].status != TransactionStatus.PRESENT, "Token is already included"
         );
@@ -48,13 +48,13 @@ contract Bridge is AccessControl {
         tokens[_contractAddress] = token;
     }
 
-    function excludeToken(address _contractAddress) public {
+    function excludeToken(address _contractAddress) public onlyRole(ADMIN) {
         require(tokens[_contractAddress].status == TransactionStatus.PRESENT, "Token doesn't exist");
 
         tokens[_contractAddress].status = TransactionStatus.DELETED;
     }
 
-    function updateChainById(uint256 _chainId) public {
+    function updateChainById(uint256 _chainId) public onlyRole(ADMIN) {
         if (chains[_chainId] == true) {
             chains[_chainId] = false;
         } else {
@@ -88,6 +88,7 @@ contract Bridge is AccessControl {
     }
 
     function redeem(bytes32 _hash, uint256 _amount, uint8 v, bytes32 r, bytes32 s) public {
+        require(transactions[_hash] == false, "Transaction exists already");
         bytes32 message = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", _hash));
         
         require(validatorAddress == ecrecover(message, v, r, s), "Validation failed");
